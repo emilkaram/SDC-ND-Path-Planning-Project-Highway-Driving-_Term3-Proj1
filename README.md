@@ -141,56 +141,34 @@ For safety, a lane change path should optimize the distance away from other traf
 The provided Eigen-3.3 library can solve such linear equations. The getXY helper function can transform (s,d) points to (x,y) points for the returned path.
 
 # Model Documentation:
-Generation of the three key future points of the car, this is used by the spline library as reference
-vector<double> next_wp0 = getXY(car_s+30, (2+4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
-vector<double> next_wp1 = getXY(car_s+60, (2+4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
-vector<double> next_wp2 = getXY(car_s+90, (2+4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
-To fill in the gaps using spline library, we do the following:
-// Calculate how to break up spline points so that we travel at our desired
-// reference velocity and avoid jerk violation.
-double target_x = 30.0;
-double target_y = s(target_x);
-double target_dist = sqrt((target_x) * (target_x) + (target_y) * (target_y));
-Finally to fill in the paths points using spline, we do the following:
-// Fill up the rest of our path planner after filling it with previous points, here we
-// will always output 50 points.
-for (int i = 1; i <= 50 - previous_path_x.size(); i++) {
 
-    double N = (target_dist/(0.02*ref_vel/2.24)); // 0.5 mph
-    double x_point = x_add_on + (target_x) / N;
-    double y_point = s(x_point);
+Initiate Lane and refrence velocity:
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code1.JPG)
 
-    x_add_on = x_point;
 
-    double x_ref = x_point;
-    double y_ref = y_point;
+Create a list of widely spaced (x,y) points, evenly spaced at 30m, later will interoplate these waypoints wiht spline and fill it in with more points that control speed
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code4.JPG)
 
-    // rotate back to normal after rotating earlier
-    x_point = (x_ref * cos(ref_yaw) - y_ref*sin(ref_yaw));
-    y_point = (x_ref * sin(ref_yaw) + y_ref*cos(ref_yaw));
+Use the previous path's end point as starting refernce:
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code5.JPG)
 
-    x_point += ref_x;
-    y_point += ref_y;
-}
-Finally the logic to change lanes if handled as follows:
-if (too_close) {
-    ref_vel -= .224; // 0.5 mph
+In Frenet add evenly 3 x 30m spaced points ahead of starting refrence:
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code6.JPG)
 
-    if (lane == 0 && !right_too_close) {
-        lane = 1;
-    } else if (lane == 1) {
-        if (!left_too_close) {
-            lane = 0;
-        } else if (!right_too_close) {
-            lane = 2;
-        }
-    } else if (lane == 2 && !left_too_close) {
-        lane = 1;
-    }
+Tranform to the local car coordinates:
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code7.JPG)
 
-} else if (ref_vel < 49.5) {
-    ref_vel += .224;
-}
+Create a spline:
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code8.JPG)
+
+Tranform back to global coordinates
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code9.JPG)
+
+Code for checking if a car on the smae lane as my car and if it is too close ( <=30m):
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code2.JPG)
+
+Code for changing lane safly:
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code3.JPG)
 
 
 # Basic Build Instructions
@@ -204,6 +182,8 @@ You can download the Term3 Simulator which contains the Path Planning Project fr
 
 # Conclusion:
 •	The car was able to drive more than 4.32 miles without incident.
+
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/car3.png)
 
 •	The screen capture below the current/best miles driven without incident. 
 
