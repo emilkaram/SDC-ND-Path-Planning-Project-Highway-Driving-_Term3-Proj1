@@ -126,8 +126,13 @@ Main car's localization Data (No Noise)
 
 The last consideration is how to create paths that can smoothly changes lanes. Any time the ego vehicle approaches a car in front of it that is moving slower than the speed limit, the ego vehicle should consider changing lanes.
 The car should only change lanes if such a change would be safe, and also if the lane change would help it move through the flow of traffic better.
+
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image4.png)
+
 For safety, a lane change path should optimize the distance away from other traffic. For comfort, a lane change path should also result in low acceleration and jerk. The acceleration and jerk part can be solved from linear equations for s and d functions. Examples of this can be found in the Trajectory Generation quizzes entitled, "Quintic Polynomial Solver" and "Polynomial Trajectory".
 The provided Eigen-3.3 library can solve such linear equations. The getXY helper function can transform (s,d) points to (x,y) points for the returned path.
+
+
 
 # Model Documentation:
 Generation of the three key future points of the car, this is used by the spline library as reference
@@ -162,25 +167,8 @@ for (int i = 1; i <= 50 - previous_path_x.size(); i++) {
     y_point += ref_y;
 }
 Finally the logic to change lanes if handled as follows:
-if (too_close) {
-    ref_vel -= .224; // 0.5 mph
 
-    if (lane == 0 && !right_too_close) {
-        lane = 1;
-    } else if (lane == 1) {
-        if (!left_too_close) {
-            lane = 0;
-        } else if (!right_too_close) {
-            lane = 2;
-        }
-    } else if (lane == 2 && !left_too_close) {
-        lane = 1;
-    }
-
-} else if (ref_vel < 49.5) {
-    ref_vel += .224;
-}
-============
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/Code3.JPG)
 
 
 
