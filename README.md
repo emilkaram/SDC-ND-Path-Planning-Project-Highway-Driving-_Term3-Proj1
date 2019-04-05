@@ -9,19 +9,23 @@ The block daiagram below shows general view of self-driving autonomous system in
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image3.png)
 
 ## Prediction:
+Prediction about what static and dynamic obstacles are likely to do.
 
 The car transmits its location, along with its sensor fusion data, which estimates the location of all the vehicles on the same side of the road.
 
-## Behavior planner takes input :
+## Behavior planner:
+Inputs :
 •	map of the world,
 •	route to the destination
-•	prediction about what static and dynamic obstacles are likely to do
-Output: Suggested maneuver for the vehicle which the trajectory planner is responsible for reaching collision-free, smooth and safe behavior.
+•	prediction about what static and dynamic obstacles are likely to do.
+
+Output: 
+Suggested maneuver for the vehicle which the trajectory planner is responsible for reaching collision-free, smooth and safe behavior.
 
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image5.png)
 
 ## Trajectory generation :
-
+Trajectory planner is responsible for reaching collision-free, smooth and safe behavior.
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/car1.png)
 
 # The Goal of this Project
@@ -61,6 +65,7 @@ The jerk is calculated as the average acceleration over 1 second intervals. In o
 Using Previous Path Points
 
 I coded to builds a 50 point path, it starts the new path with whatever previous path points were left over from the last cycle. Then we append new waypoints, until the new path has 50 total waypoints.
+
 Using information from the previous path ensures that there is a smooth transition from cycle to cycle. But the more waypoints we use from the previous path, the less the new path will reflect dynamic changes in the environment.
 Ideally, we might only use a few waypoints from the previous path and then generate the rest of the new path based on new data from the car's sensor fusion information.
 
