@@ -184,16 +184,27 @@ You can download the Term3 Simulator which contains the Path Planning Project fr
 
 # Conclusion:
 •	The car was able to drive more than 4.32 miles without incident.
+
 •	The screen capture below the current/best miles driven without incident. 
+
 •	The car drives according to the speed limit about 50mph.
+
 •	The car drove within the speed limit. Also the car did not driving much slower than speed limit unless obstructed by traffic.
+
 •	Max Acceleration and Jerk were not Exceeded.
+
 •	The car did not exceed a total acceleration of 10 m/s^2 and a jerk of 10 m/s^3.
+
 •	Car did not have collisions.
+
 •	The car did not come into contact with any of the other cars on the road.
+
 •	The car stayed in its lane, except for the time between changing lanes.
+
 •	The car did not spend more than a 3-second length out side the lane lanes during changing lanes.
+
 •	The car was able to change lanes smoothly.
+
 •	The car was able to smoothly change lanes when it makes sense to do so, such as when behind a slower moving car and an adjacent lane is clear of other traffic.
 
 # Video link:
