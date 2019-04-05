@@ -135,44 +135,42 @@ The provided Eigen-3.3 library can solve such linear equations. The getXY helper
 
 
 # Model Documentation:
-Generation of the three key future points of the car, this is used by the spline library as reference
-vector<double> next_wp0 = getXY(car_s+30, (2+4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
-vector<double> next_wp1 = getXY(car_s+60, (2+4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
-vector<double> next_wp2 = getXY(car_s+90, (2+4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
-To fill in the gaps using spline library, we do the following:
-// Calculate how to break up spline points so that we travel at our desired
-// reference velocity and avoid jerk violation.
-double target_x = 30.0;
-double target_y = s(target_x);
-double target_dist = sqrt((target_x) * (target_x) + (target_y) * (target_y));
-Finally to fill in the paths points using spline, we do the following:
-// Fill up the rest of our path planner after filling it with previous points, here we
-// will always output 50 points.
-for (int i = 1; i <= 50 - previous_path_x.size(); i++) {
 
-    double N = (target_dist/(0.02*ref_vel/2.24)); // 0.5 mph
-    double x_point = x_add_on + (target_x) / N;
-    double y_point = s(x_point);
+## initate the lane and refrence velocity:
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/Code1.JPG)
 
-    x_add_on = x_point;
+## create list of widely spaced points (x,y) evenly spaced at 30m:
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/Code4.JPG)
 
-    double x_ref = x_point;
-    double y_ref = y_point;
+## use the previous path's end point as starting refrence:
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/Code5.JPG)
 
-    // rotate back to normal after rotating earlier
-    x_point = (x_ref * cos(ref_yaw) - y_ref*sin(ref_yaw));
-    y_point = (x_ref * sin(ref_yaw) + y_ref*cos(ref_yaw));
+## Generation of the three key future points of the car, this is used by the spline library as reference:
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/Code6.JPG)
 
-    x_point += ref_x;
-    y_point += ref_y;
-}
-Finally the logic to change lanes if handled as follows:
+## transform to local car coordinates: 
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/Code7.JPG)
 
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image7.png)
+
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image7.png)
+
+
+## To fill in the paths points using spline, we do the following:
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/Code8.JPG)
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image10.png)
+
+
+## transform back to global coordinates:
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/Code9.JPG)
+
+## Finally to fill in the paths points using spline, we do the following:
+
+## The code for checking car in my lane and what is its poistion from my car:
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/Code2.JPG)
+
+## The code to change lane:
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/Code3.JPG)
-
-
-
-
 
 
 # Basic Build Instructions
