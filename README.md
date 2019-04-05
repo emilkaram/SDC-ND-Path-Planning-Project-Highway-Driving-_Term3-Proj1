@@ -156,6 +156,10 @@ In Frenet add evenly 3 x 30m spaced points ahead of starting refrence:
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code6.JPG)
 
 Tranform to the local car coordinates:
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image6.png)
+
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image7.png)
+
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code7.JPG)
 
 Create a spline:
