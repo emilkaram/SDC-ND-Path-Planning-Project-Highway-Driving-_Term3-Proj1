@@ -1,3 +1,5 @@
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image1.JPG)
+
 # Introduction:
 
 Path planning in self-driving cars
