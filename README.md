@@ -4,7 +4,7 @@
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/car2.png)
 
 # Introduction:
-The block daiagram below shows general view of self-driving autonomous system integration, The blocks inside the yellow container are the parts of the path planning procedure.
+The block daiagram below shows general view of self-driving autonomous system integration, The blocks inside the yellow container are the elements of the path planning procedure.
 
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image3.png)
 
