@@ -5,15 +5,20 @@ SDC-ND-Path Planning Project (Highway Driving)-Term3-Project1
 
 
 # Introduction:
-Path planning in self-driving cars
-This is the general view of self-driving autonomous system integration :
-The blocks inside the container are the parts of the path planning procedure;
-Prediction:
-We predict situations in over environment in order to get you to the destination safely and efficiently. For this project I had to build collision detection, that predicts a possible collision with two cars.
+The diagram below show a  general view of self-driving autonomous system integration:
+
+The blocks inside the container are the parts of the path planning:
 
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image2.png)
 
-Behavior planner takes input :
+ 
+## Prediction:
+We predict situations in over environment in order to get you to the destination safely and efficiently. 
+For this project I had to build collision detection, that predicts a possible collision with two cars.
+
+
+
+## Behavior planner takes input :
 •	map of the world,
 •	route to the destination
 •	prediction about what static and dynamic obstacles are likely to do
@@ -22,7 +27,7 @@ Output: Suggested maneuver for the vehicle which the trajectory planner is respo
 
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image5.png)
 
-Trajectory generation :
+## Trajectory generation :
 •	Current position (s, d)
 •	Desired lane (s+30, r*lane+(r/2))
 •	Desired lane (s+60, r*lane+(r/2))
