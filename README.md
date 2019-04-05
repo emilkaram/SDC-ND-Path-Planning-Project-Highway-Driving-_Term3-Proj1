@@ -3,17 +3,15 @@ SDC-ND-Path Planning Project (Highway Driving)-Term3-Project1
 
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image1.JPG)
 
-
 # Introduction:
 The diagram below show a  general view of self-driving autonomous system integration, The blocks inside the container are the parts of the path planning:
 
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image3.png)
 
- 
 ## Prediction:
-The car transmits its location, along with its sensor fusion data, which estimates the location of all the vehicles on the same side of the road.
 prediction: static and dynamic obstacles are likely to do.
 
+The car transmits its location, along with its sensor fusion data, which estimates the location of all the vehicles on the same side of the road.
 
 ## Behavior planner:
 Inputs:
