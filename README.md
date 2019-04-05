@@ -1,145 +1,211 @@
-# CarND-Path-Planning-Project
-Self-Driving Car Engineer Nanodegree Program
-   
-### Simulator.
-You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2).  
+# Introduction:
 
-To run the simulator on Mac/Linux, first make the binary file executable with the following command:
-```shell
-sudo chmod u+x {simulator_file_name}
-```
+Path planning in self-driving cars
+This is the general view of self-driving autonomous system integration :
+The blocks inside the container are the parts of the path planning procedure;
 
-### Goals
-In this project your goal is to safely navigate around a virtual highway with other traffic that is driving +-10 MPH of the 50 MPH speed limit. You will be provided the car's localization and sensor fusion data, there is also a sparse map list of waypoints around the highway. The car should try to go as close as possible to the 50 MPH speed limit, which means passing slower traffic when possible, note that other cars will try to change lanes too. The car should avoid hitting other cars at all cost as well as driving inside of the marked road lanes at all times, unless going from one lane to another. The car should be able to make one complete loop around the 6946m highway. Since the car is trying to go 50 MPH, it should take a little over 5 minutes to complete 1 loop. Also the car should not experience total acceleration over 10 m/s^2 and jerk that is greater than 10 m/s^3.
+## Prediction:
+We predict situations in over environment in order to get you to the destination safely and efficiently. For this project I had to build collision detection, that predicts a possible collision with two cars.
 
-#### The map of the highway is in data/highway_map.txt
-Each waypoint in the list contains  [x,y,s,dx,dy] values. x and y are the waypoint's map coordinate position, the s value is the distance along the road to get to that waypoint in meters, the dx and dy values define the unit normal vector pointing outward of the highway loop.
+## Behavior planner takes input :
+•	map of the world,
+•	route to the destination
+•	prediction about what static and dynamic obstacles are likely to do
+Output: Suggested maneuver for the vehicle which the trajectory planner is responsible for reaching collision-free, smooth and safe behavior.
 
-The highway's waypoints loop around so the frenet s value, distance along the road, goes from 0 to 6945.554.
+## Trajectory generation :
 
-## Basic Build Instructions
 
-1. Clone this repo.
-2. Make a build directory: `mkdir build && cd build`
-3. Compile: `cmake .. && make`
-4. Run it: `./path_planning`.
+# The Goal of this Project
+In this project, the goal is to design a path planner that is able to create smooth, safe trajectories for the car to follow along a 3-lane highway with traffic. A successful path planner will be able to keep inside its lane, avoid hitting other cars, and pass slower moving traffic all by using localization, sensor fusion, and map data.
+Also, need to control the speed and lane of a car given the sensor fusion data of cars around me via the simulator
+The highway track has other vehicles, all going different speeds, but approximately obeying the 50 MPH speed limit.
+The car transmits its location, along with its sensor fusion data, which estimates the location of all the vehicles on the same side of the road.
 
-Here is the data provided from the Simulator to the C++ Program
+# Approach:
+1.	First, get the car to drive forward at constant velocity about 50mph.
+2.	Next, move straight at a constant velocity of 50mph and stay in current lane.
+3.	Next, use spline.h library to interpolate the path poins to follow the lane and  avoid jerks.
+4.	Next, sensing the car in front of me and slowing down if necessary distance is <=30m.
+5.	At this point to avoid jerk in the start up, I set the starting velocity to 5mph and then gradually increase it over time at about 5m/s^2.
+6.	For lane change, attempted blind chang a lane if there was a car ahead at <=30m.
+7.	To avoid collisions, check cars on the right and left lanes then attempt a lane change if is safe.
+Point Paths
+The path planner output a list of x and y global map coordinates.
+Each pair of x and y coordinates is a point, and all of the points together form a trajectory. I used 50 points, and maintained the x list the same length as the y list.
+Every 20 ms the car moves to the next point on the list. 
+The car's new rotation becomes the line between the previous waypoint and the car's new location.
+The car moves from point to point perfectly by the simulator, so I don't have to worry about building a controller for this project.
 
-#### Main car's localization Data (No Noise)
 
-["x"] The car's x position in map coordinates
+# Details:
 
-["y"] The car's y position in map coordinates
+## Velocity
+The velocity of the car depends on the spacing of the points. 
+Because the car moves to a new waypoint every 20ms, the larger the spacing between points, the faster the car will travel. 
+The speed goal is to have the car traveling at (but not above) the 50 MPH speed limit as often as possible. However, there will be times when traffic gets in the way and car need to slow down to avoid collision.
 
-["s"] The car's s position in frenet coordinates
+## Acceleration 
+Acceleration calculated by comparing the rate of change of average speed over 0.2 second intervals. So I set my acceleration and de-acceleration to 5m/s^2 to avoid jerk 
 
-["d"] The car's d position in frenet coordinates
+## Jerk
+The jerk is calculated as the average acceleration over 1 second intervals. In order for the passenger to have an enjoyable ride both the jerk and the total acceleration should not exceed 10 m/s^2. So I set my acceleration and de-acceleration to 5m/s^2 to avoid jerk.
+Using Previous Path Points
 
-["yaw"] The car's yaw angle in the map
+I coded to builds a 50 point path, it starts the new path with whatever previous path points were left over from the last cycle. Then we append new waypoints, until the new path has 50 total waypoints.
+Using information from the previous path ensures that there is a smooth transition from cycle to cycle. But the more waypoints we use from the previous path, the less the new path will reflect dynamic changes in the environment.
+Ideally, we might only use a few waypoints from the previous path and then generate the rest of the new path based on new data from the car's sensor fusion information.
 
-["speed"] The car's speed in MPH
-
-#### Previous path data given to the Planner
-
-//Note: Return the previous list but with processed points removed, can be a nice tool to show how far along
-the path has processed since last time. 
-
+## Previous path data given to the Planner
 ["previous_path_x"] The previous list of x points previously given to the simulator
 
 ["previous_path_y"] The previous list of y points previously given to the simulator
-
-#### Previous path's end s and d values 
+Previous path's end s and d values
 
 ["end_path_s"] The previous list's last point's frenet s value
 
 ["end_path_d"] The previous list's last point's frenet d value
 
-#### Sensor Fusion Data, a list of all other car's attributes on the same side of the road. (No Noise)
+## Sensor Fusion Data:
+A list of all other car's attributes on the same side of the road. (No Noise)
 
-["sensor_fusion"] A 2d vector of cars and then that car's [car's unique ID, car's x position in map coordinates, car's y position in map coordinates, car's x velocity in m/s, car's y velocity in m/s, car's s position in frenet coordinates, car's d position in frenet coordinates. 
+["sensor_fusion"] A 2d vector of cars and then that car's [car's unique ID, car's x position in map coordinates, car's y position in map coordinates, car's x velocity in m/s, car's y velocity in m/s, car's s position in frenet coordinates, car's d position in frenet coordinates.
 
-## Details
+## Timing
+The simulator runs a cycle every 20 ms (50 frames per second), but my C++ path planning program will provide a new path at least one 20 ms cycle behind.
 
-1. The car uses a perfect controller and will visit every (x,y) point it recieves in the list every .02 seconds. The units for the (x,y) points are in meters and the spacing of the points determines the speed of the car. The vector going from a point to the next point in the list dictates the angle of the car. Acceleration both in the tangential and normal directions is measured along with the jerk, the rate of change of total Acceleration. The (x,y) point paths that the planner recieves should not have a total acceleration that goes over 10 m/s^2, also the jerk should not go over 50 m/s^3. (NOTE: As this is BETA, these requirements might change. Also currently jerk is over a .02 second interval, it would probably be better to average total acceleration over 1 second and measure jerk from that.
+The simulator will simply keep progressing down its last given path while it waits for a new generated path.
+This means that using previous path data becomes even more important when higher latency is involved. 
+Imagine, for instance, that there is a 500ms delay in sending a new path to the simulator. As long as the new path incorporates a sufficient length of the previous path, the transition will still be smooth.
 
-2. There will be some latency between the simulator running and the path planner returning a path, with optimized code usually its not very long maybe just 1-3 time steps. During this delay the simulator will continue using points that it was last given, because of this its a good idea to store the last points you have used so you can have a smooth transition. previous_path_x, and previous_path_y can be helpful for this transition since they show the last points given to the simulator controller with the processed points already removed. You would either return a path that extends this previous path or make sure to create a new path that has a smooth transition with this last path.
+A concern, though, is how accurately we can predict other traffic 1-2 seconds into the future. An advantage of newly generated paths is that they take into account the most up-to-date state of other traffic.
+Setting Point Paths with Latency
 
-## Tips
+As a mentioned, my C++ path planner will at the very least be one cycle behind the simulator because the C++ program can't receive and send data on the same cycle. As a result, any path that the simulator receives will be from the perspective of a previous cycle. This might mean that by the time a new path reaches the simulator, the vehicle has already passed the first few waypoints on that path.
+Luckily I don't have to worry about this too much. The simulator has built-in tools to deal with this timing difference. The simulator actually expects the received path to be a little out of date compared to where the car is, and the simulator will consider which point on the received path is closest to the car and adjust appropriately.
 
-A really helpful resource for doing this project and creating smooth trajectories was using http://kluge.in-chemnitz.de/opensource/spline/, the spline function is in a single hearder file is really easy to use.
+## Highway Map
+Inside data/highway_map.csv there is a list of waypoints that go all the way around the track. The track contains a total of 181 waypoints, with the last waypoint mapping back around to the first. The waypoints are in the middle of the double-yellow dividing line in the center of the highway.
 
----
+The track is 6945.554 meters around (about 4.32 miles). If the car averages near 50 MPH, then it should take a little more than 5 minutes for it to go all the way around the highway.
+The highway has 6 lanes total - 3 heading in each direction. Each lane is 4 m wide and the car should only ever be in one of the 3 lanes on the right-hand side. The car should always be inside a lane unless doing a lane change.
 
-## Dependencies
+## Waypoint Data
+Each waypoint has an (x,y) global map position, and a Frenet s value and Frenet d unit normal vector (split up into the x component, and the y component).
 
-* cmake >= 3.5
-  * All OSes: [click here for installation instructions](https://cmake.org/install/)
-* make >= 4.1
-  * Linux: make is installed by default on most Linux distros
-  * Mac: [install Xcode command line tools to get make](https://developer.apple.com/xcode/features/)
-  * Windows: [Click here for installation instructions](http://gnuwin32.sourceforge.net/packages/make.htm)
-* gcc/g++ >= 5.4
-  * Linux: gcc / g++ is installed by default on most Linux distros
-  * Mac: same deal as make - [install Xcode command line tools]((https://developer.apple.com/xcode/features/)
-  * Windows: recommend using [MinGW](http://www.mingw.org/)
-* [uWebSockets](https://github.com/uWebSockets/uWebSockets)
-  * Run either `install-mac.sh` or `install-ubuntu.sh`.
-  * If you install from source, checkout to commit `e94b6e1`, i.e.
-    ```
-    git clone https://github.com/uWebSockets/uWebSockets 
-    cd uWebSockets
-    git checkout e94b6e1
-    ```
+The s value is the distance along the direction of the road. The first waypoint has an s value of 0 because it is the starting point.
 
-## Editor Settings
+The d vector has a magnitude of 1 and points perpendicular to the road in the direction of the right-hand side of the road. The d vector can be used to calculate lane positions. For example, if you want to be in the left lane at some waypoint just add the waypoint's (x,y) coordinates with the d vector multiplied by 2. Since the lane is 4 m wide, the middle of the left lane (the lane closest to the double-yellow dividing line) is 2 m from the waypoint.
 
-We've purposefully kept editor configuration files out of this repo in order to
-keep it as simple and environment agnostic as possible. However, we recommend
-using the following settings:
+If you would like to be in the middle lane, add the waypoint's coordinates to the d vector multiplied by 6 = (2+4), since the center of the middle lane is 4 m from the center of the left lane, which is itself 2 m from the double-yellow dividing line and the waypoints.
 
-* indent using spaces
-* set tab width to 2 spaces (keeps the matrices in source code aligned)
-
-## Code Style
-
-Please (do your best to) stick to [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html).
-
-## Project Instructions and Rubric
-
-Note: regardless of the changes you make, your project must be buildable using
-cmake and make!
+## The map of the highway is in data/highway_map.txt
+Each waypoint in the list contains [x,y,s,dx,dy] values. x and y are the waypoint's map coordinate position, the s value is the distance along the road to get to that waypoint in meters, the dx and dy values define the unit normal vector pointing outward of the highway loop.
+The highway's waypoints loop around so the frenet s value, distance along the road, goes from 0 to 6945.554.
 
 
-## Call for IDE Profiles Pull Requests
+## Sensor Fusion
+It's important that the car doesn't crash into any of the other vehicles on the road, all of which are moving at different speeds around the speed limit and can change lanes.
+The sensor_fusion variable contains all the information about the cars on the right-hand side of the road.
+The data format for each car is: [ id, x, y, vx, vy, s, d]. The id is a unique identifier for that car. The x, y values are in global map coordinates, and the vx, vy values are the velocity components, also in reference to the global map. Finally s and d are the Frenet coordinates for that car.
 
-Help your fellow students!
+The vx, vy values can be useful for predicting where the cars will be in the future. For instance, if you were to assume that the tracked car kept moving along the road, then its future predicted Frenet s value will be its current s value plus its (transformed) total velocity (m/s) multiplied by the time elapsed into the future (s).
 
-We decided to create Makefiles with cmake to keep this project as platform
-agnostic as possible. Similarly, we omitted IDE profiles in order to ensure
-that students don't feel pressured to use one IDE or another.
+## The map of the highway is in data/highway_map.txt
+Each waypoint in the list contains [x,y,s,dx,dy] values. x and y are the waypoint's map coordinate position, the s value is the distance along the road to get to that waypoint in meters, the dx and dy values define the unit normal vector pointing outward of the highway loop.
+The highway's waypoints loop around so the frenet s value, distance along the road, goes from 0 to 6945.554.
+Main car's localization Data (No Noise)
+["x"] The car's x position in map coordinates
+["y"] The car's y position in map coordinates
+["s"] The car's s position in frenet coordinates
+["d"] The car's d position in frenet coordinates
+["yaw"] The car's yaw angle in the map
+["speed"] The car's speed in MPH
 
-However! I'd love to help people get up and running with their IDEs of choice.
-If you've created a profile for an IDE that you think other students would
-appreciate, we'd love to have you add the requisite profile files and
-instructions to ide_profiles/. For example if you wanted to add a VS Code
-profile, you'd add:
 
-* /ide_profiles/vscode/.vscode
-* /ide_profiles/vscode/README.md
 
-The README should explain what the profile does, how to take advantage of it,
-and how to install it.
+## Changing Lanes
+The last consideration is how to create paths that can smoothly changes lanes. Any time the ego vehicle approaches a car in front of it that is moving slower than the speed limit, the ego vehicle should consider changing lanes.
+The car should only change lanes if such a change would be safe, and also if the lane change would help it move through the flow of traffic better.
 
-Frankly, I've never been involved in a project with multiple IDE profiles
-before. I believe the best way to handle this would be to keep them out of the
-repo root to avoid clutter. My expectation is that most profiles will include
-instructions to copy files to a new location to get picked up by the IDE, but
-that's just a guess.
+For safety, a lane change path should optimize the distance away from other traffic. For comfort, a lane change path should also result in low acceleration and jerk. The acceleration and jerk part can be solved from linear equations for s and d functions. Examples of this can be found in the Trajectory Generation quizzes entitled, "Quintic Polynomial Solver" and "Polynomial Trajectory".
+The provided Eigen-3.3 library can solve such linear equations. The getXY helper function can transform (s,d) points to (x,y) points for the returned path.
 
-One last note here: regardless of the IDE used, every submitted project must
-still be compilable with cmake and make./
+# Model Documentation:
+Generation of the three key future points of the car, this is used by the spline library as reference
+vector<double> next_wp0 = getXY(car_s+30, (2+4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+vector<double> next_wp1 = getXY(car_s+60, (2+4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+vector<double> next_wp2 = getXY(car_s+90, (2+4*lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
+To fill in the gaps using spline library, we do the following:
+// Calculate how to break up spline points so that we travel at our desired
+// reference velocity and avoid jerk violation.
+double target_x = 30.0;
+double target_y = s(target_x);
+double target_dist = sqrt((target_x) * (target_x) + (target_y) * (target_y));
+Finally to fill in the paths points using spline, we do the following:
+// Fill up the rest of our path planner after filling it with previous points, here we
+// will always output 50 points.
+for (int i = 1; i <= 50 - previous_path_x.size(); i++) {
 
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+    double N = (target_dist/(0.02*ref_vel/2.24)); // 0.5 mph
+    double x_point = x_add_on + (target_x) / N;
+    double y_point = s(x_point);
+
+    x_add_on = x_point;
+
+    double x_ref = x_point;
+    double y_ref = y_point;
+
+    // rotate back to normal after rotating earlier
+    x_point = (x_ref * cos(ref_yaw) - y_ref*sin(ref_yaw));
+    y_point = (x_ref * sin(ref_yaw) + y_ref*cos(ref_yaw));
+
+    x_point += ref_x;
+    y_point += ref_y;
+}
+Finally the logic to change lanes if handled as follows:
+if (too_close) {
+    ref_vel -= .224; // 0.5 mph
+
+    if (lane == 0 && !right_too_close) {
+        lane = 1;
+    } else if (lane == 1) {
+        if (!left_too_close) {
+            lane = 0;
+        } else if (!right_too_close) {
+            lane = 2;
+        }
+    } else if (lane == 2 && !left_too_close) {
+        lane = 1;
+    }
+
+} else if (ref_vel < 49.5) {
+    ref_vel += .224;
+}
+
+
+# Basic Build Instructions
+1.	Clone this repo.
+2.	Make a build directory: mkdir build && cd build
+3.	Compile: cmake .. && make
+4.	Run it: ./path_planning.
+Click on the "Simulator" button in the bottom of the Udacity workspace, which will open a new virtual desktop. You should see a "Simulator" icon on the virtual desktop. Double-click the "Simulator" icon in that desktop to start the simulator.
+Simulator.
+You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2).
+
+# Conclusion:
+•	The car was able to drive more than 4.32 miles without incident.
+•	The screen capture below the current/best miles driven without incident. 
+•	The car drives according to the speed limit about 50mph.
+•	The car drove within the speed limit. Also the car did not driving much slower than speed limit unless obstructed by traffic.
+•	Max Acceleration and Jerk were not Exceeded.
+•	The car did not exceed a total acceleration of 10 m/s^2 and a jerk of 10 m/s^3.
+•	Car did not have collisions.
+•	The car did not come into contact with any of the other cars on the road.
+•	The car stayed in its lane, except for the time between changing lanes.
+•	The car did not spend more than a 3-second length out side the lane lanes during changing lanes.
+•	The car was able to change lanes smoothly.
+•	The car was able to smoothly change lanes when it makes sense to do so, such as when behind a slower moving car and an adjacent lane is clear of other traffic.
+
+## Video link:
 
