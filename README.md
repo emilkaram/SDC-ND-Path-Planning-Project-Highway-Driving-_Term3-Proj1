@@ -153,7 +153,7 @@ The provided Eigen-3.3 library can solve such linear equations. The getXY helper
 
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image7.png)
 
-![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image7.png)
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image6.png)
 
 
 ## To fill in the paths points using spline, we do the following:
