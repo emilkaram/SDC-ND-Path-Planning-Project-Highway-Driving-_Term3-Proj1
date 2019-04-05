@@ -72,10 +72,12 @@ Ideally, we might only use a few waypoints from the previous path and then gener
 
 ## Previous path data given to the Planner
 ["previous_path_x"] The previous list of x points previously given to the simulator
+
 ["previous_path_y"] The previous list of y points previously given to the simulator
 
 ## Previous path's end s and d values
 ["end_path_s"] The previous list's last point's frenet s value
+
 ["end_path_d"] The previous list's last point's frenet d value
 
 ## Sensor Fusion Data, a list of all other car's attributes on the same side of the road. (No Noise)
@@ -103,19 +105,17 @@ The highway has 6 lanes total - 3 heading in each direction. Each lane is 4 m wi
 
 ## Waypoint Data
 Each waypoint has an (x,y) global map position, and a Frenet s value and Frenet d unit normal vector (split up into the x component, and the y component).
+
 The s value is the distance along the direction of the road. The first waypoint has an s value of 0 because it is the starting point.
+
 The d vector has a magnitude of 1 and points perpendicular to the road in the direction of the right-hand side of the road. The d vector can be used to calculate lane positions. For example, if you want to be in the left lane at some waypoint just add the waypoint's (x,y) coordinates with the d vector multiplied by 2. Since the lane is 4 m wide, the middle of the left lane (the lane closest to the double-yellow dividing line) is 2 m from the waypoint.
+
 If you would like to be in the middle lane, add the waypoint's coordinates to the d vector multiplied by 6 = (2+4), since the center of the middle lane is 4 m from the center of the left lane, which is itself 2 m from the double-yellow dividing line and the waypoints.
 Converting Frenet Coordinates
-We have included a helper function, getXY, which takes in Frenet (s,d) coordinates and transforms them to (x,y) coordinates.
-Interpolating Points
-If you need to estimate the location of points between the known waypoints, you will need to "interpolate" the position of those points.
-In previous lessons we looked at fitting polynomials to waypoints. Once you have a polynomial function, you can use it to interpolate the location of a new point.
-There are also other methods you could use. For example, Bezier curve fitting with control points, or spline fitting, which guarantees that the generated function passes through every point.
-Here is a great and easy to setup and use spline tool for C++, contained in just a single header file.
 
 The map of the highway is in data/highway_map.txt
 Each waypoint in the list contains [x,y,s,dx,dy] values. x and y are the waypoint's map coordinate position, the s value is the distance along the road to get to that waypoint in meters, the dx and dy values define the unit normal vector pointing outward of the highway loop.
+
 The highway's waypoints loop around so the frenet s value, distance along the road, goes from 0 to 6945.554.
 
 
