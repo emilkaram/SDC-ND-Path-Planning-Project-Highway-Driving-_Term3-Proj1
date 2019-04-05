@@ -21,7 +21,7 @@ Output: Suggested maneuver for the vehicle which the trajectory planner is respo
 
 ## Trajectory generation :
 
-![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/car1.JPG)
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/car1.png)
 
 # The Goal of this Project
 In this project, the goal is to design a path planner that is able to create smooth, safe trajectories for the car to follow along a 3-lane highway with traffic. A successful path planner will be able to keep inside its lane, avoid hitting other cars, and pass slower moving traffic all by using localization, sensor fusion, and map data.
