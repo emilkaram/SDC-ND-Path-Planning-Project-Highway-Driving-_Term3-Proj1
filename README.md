@@ -1,15 +1,16 @@
+# Path Planning Highway Driving Project Term3-Project1
+
+
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/car2.png)
 
 # Introduction:
-
-Path planning in self-driving cars
-This is the general view of self-driving autonomous system integration :
-The blocks inside the container are the parts of the path planning procedure;
+The block daiagram below shows general view of self-driving autonomous system integration, The blocks inside the container are the parts of the path planning procedure.
 
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image3.png)
 
 ## Prediction:
-We predict situations in over environment in order to get you to the destination safely and efficiently. For this project I had to build collision detection, that predicts a possible collision with two cars.
+
+The car transmits its location, along with its sensor fusion data, which estimates the location of all the vehicles on the same side of the road.
 
 ## Behavior planner takes input :
 •	map of the world,
@@ -137,14 +138,11 @@ The car should only change lanes if such a change would be safe, and also if the
 
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image4.png)
 
-For safety, a lane change path should optimize the distance away from other traffic. For comfort, a lane change path should also result in low acceleration and jerk. The acceleration and jerk part can be solved from linear equations for s and d functions. Examples of this can be found in the Trajectory Generation quizzes entitled, "Quintic Polynomial Solver" and "Polynomial Trajectory".
-The provided Eigen-3.3 library can solve such linear equations. The getXY helper function can transform (s,d) points to (x,y) points for the returned path.
+For safety, a lane change path should optimize the distance away from other traffic. For comfort, a lane change path should also result in low acceleration and jerk. 
 
 # Model Documentation:
-
 Initiate Lane and refrence velocity:
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code1.JPG)
-
 
 Create a list of widely spaced (x,y) points, evenly spaced at 30m, later will interoplate these waypoints wiht spline and fill it in with more points that control speed
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code4.JPG)
@@ -183,6 +181,7 @@ Code for changing lane safly:
 Click on the "Simulator" button in the bottom of the Udacity workspace, which will open a new virtual desktop. You should see a "Simulator" icon on the virtual desktop. Double-click the "Simulator" icon in that desktop to start the simulator.
 Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2).
+
 
 # Conclusion:
 •	The car was able to drive more than 4.32 miles without incident.
