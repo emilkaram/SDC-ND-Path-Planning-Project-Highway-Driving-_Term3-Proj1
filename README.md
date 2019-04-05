@@ -1,7 +1,7 @@
 # SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1
 SDC-ND-Path Planning Project (Highway Driving)-Term3-Project1
 
-![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/edit/master//images/image1.jpg)
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image1.JPG)
 
 
 # Introduction:
