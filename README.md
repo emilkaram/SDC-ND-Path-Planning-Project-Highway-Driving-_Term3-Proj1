@@ -6,6 +6,8 @@ Path planning in self-driving cars
 This is the general view of self-driving autonomous system integration :
 The blocks inside the container are the parts of the path planning procedure;
 
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image3.png)
+
 ## Prediction:
 We predict situations in over environment in order to get you to the destination safely and efficiently. For this project I had to build collision detection, that predicts a possible collision with two cars.
 
@@ -15,8 +17,11 @@ We predict situations in over environment in order to get you to the destination
 •	prediction about what static and dynamic obstacles are likely to do
 Output: Suggested maneuver for the vehicle which the trajectory planner is responsible for reaching collision-free, smooth and safe behavior.
 
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image5.png)
+
 ## Trajectory generation :
 
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/car1.JPG)
 
 # The Goal of this Project
 In this project, the goal is to design a path planner that is able to create smooth, safe trajectories for the car to follow along a 3-lane highway with traffic. A successful path planner will be able to keep inside its lane, avoid hitting other cars, and pass slower moving traffic all by using localization, sensor fusion, and map data.
@@ -130,6 +135,8 @@ Main car's localization Data (No Noise)
 The last consideration is how to create paths that can smoothly changes lanes. Any time the ego vehicle approaches a car in front of it that is moving slower than the speed limit, the ego vehicle should consider changing lanes.
 The car should only change lanes if such a change would be safe, and also if the lane change would help it move through the flow of traffic better.
 
+![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image4.png)
+
 For safety, a lane change path should optimize the distance away from other traffic. For comfort, a lane change path should also result in low acceleration and jerk. The acceleration and jerk part can be solved from linear equations for s and d functions. Examples of this can be found in the Trajectory Generation quizzes entitled, "Quintic Polynomial Solver" and "Polynomial Trajectory".
 The provided Eigen-3.3 library can solve such linear equations. The getXY helper function can transform (s,d) points to (x,y) points for the returned path.
 
@@ -221,5 +228,5 @@ You can download the Term3 Simulator which contains the Path Planning Project fr
 •	The car was able to smoothly change lanes when it makes sense to do so, such as when behind a slower moving car and an adjacent lane is clear of other traffic.
 
 ## Video link:
-
+[video link to path planning highway driving project](https://github.com/emilkaram/SDC-ND-MPC-Udacity-Term2-Project5/tree/master/video/vid2.mp4)
 
