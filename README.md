@@ -228,5 +228,6 @@ You can download the Term3 Simulator which contains the Path Planning Project fr
 •	The car was able to smoothly change lanes when it makes sense to do so, such as when behind a slower moving car and an adjacent lane is clear of other traffic.
 
 ## Video link:
-[video link to path planning highway driving project](https://github.com/emilkaram/SDC-ND-MPC-Udacity-Term2-Project5/tree/master/video/vid2.mp4)
+[video link to path planning highway driving project](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/videos/v1.mp4)
+
 
