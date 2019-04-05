@@ -6,22 +6,22 @@ SDC-ND-Path Planning Project (Highway Driving)-Term3-Project1
 
 # Introduction:
 The diagram below show a  general view of self-driving autonomous system integration:
-
 The blocks inside the container are the parts of the path planning:
 
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image3.png)
 
  
 ## Prediction:
-We predict situations in over environment in order to get you to the destination safely and efficiently. 
-For this project I had to build collision detection, that predicts a possible collision with two cars.
 
 
 
-## Behavior planner takes input :
+
+## Behavior planner:
+Inputs:
 •	map of the world,
 •	route to the destination
 •	prediction about what static and dynamic obstacles are likely to do
+
 Output: Suggested maneuver for the vehicle which the trajectory planner is responsible for reaching collision-free, smooth and safe behavior.
 
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image5.png)
@@ -112,9 +112,12 @@ The highway's waypoints loop around so the frenet s value, distance along the ro
 It's important that the car doesn't crash into any of the other vehicles on the road, all of which are moving at different speeds around the speed limit and can change lanes.
 The sensor_fusion variable contains all the information about the cars on the right-hand side of the road.
 The data format for each car is: [ id, x, y, vx, vy, s, d]. The id is a unique identifier for that car. The x, y values are in global map coordinates, and the vx, vy values are the velocity components, also in reference to the global map. Finally s and d are the Frenet coordinates for that car.
+
 The vx, vy values can be useful for predicting where the cars will be in the future. For instance, if you were to assume that the tracked car kept moving along the road, then its future predicted Frenet s value will be its current s value plus its (transformed) total velocity (m/s) multiplied by the time elapsed into the future (s).
 The map of the highway is in data/highway_map.txt
+
 Each waypoint in the list contains [x,y,s,dx,dy] values. x and y are the waypoint's map coordinate position, the s value is the distance along the road to get to that waypoint in meters, the dx and dy values define the unit normal vector pointing outward of the highway loop.
+
 The highway's waypoints loop around so the frenet s value, distance along the road, goes from 0 to 6945.554.
 Main car's localization Data (No Noise)
 ["x"] The car's x position in map coordinates
