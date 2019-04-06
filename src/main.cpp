@@ -17,8 +17,6 @@ using std::vector;
 
 //start in lane 1:
     int lane = 1;
-    // Have a refrence velocity to target
-    //double ref_vel = 49.5; //mph
     double ref_vel = 5.0; //mph
 
 int main() {
@@ -111,15 +109,15 @@ int main() {
           car_s = end_path_s;
           }
 
-          bool too_close = false;
-          bool left_too_close = false;
-          bool right_too_close = false;
+          bool car_ahead = false;
+          bool car_left  = false;
+          bool car_right = false;
 
-          //find ref_v to use
+          
           for(int i =0 ; i <sensor_fusion.size(); i++)
           {
-            //car number i is in my lane? (sensor_fusion[i is the car ID][6 for d data])
-             float d = sensor_fusion[i][6]; //read d for each car
+            
+             float d = sensor_fusion[i][6]; 
              if (d > (4*(lane+0)) && d < (4*(lane+1))) 
              {
               double vx =sensor_fusion[i][3];
@@ -127,77 +125,68 @@ int main() {
               double check_speed = sqrt(vx*vx+vy*vy);
               double check_car_s =sensor_fusion[i][5];
 
-              check_car_s+=((double)prev_size*0.02*check_speed); //if using previous points can project s value outward in time
+              check_car_s+=((double)prev_size*0.02*check_speed); 
 
-               //check s values greater than mine and s gap
-              if((check_car_s > car_s) && ((check_car_s - car_s) < 30)) //assume the gap to check is 30m
+               //check s values for car ahead
+              if((check_car_s > car_s) && ((check_car_s - car_s) < 30)) 
                 {
-                  //do some logic here, lower refrnece velocity so we do not crach into the car in front of us
-                  //also flag to try to change lanes
-                  //ref_vel =29.5; //mph
-                  too_close=true;
+                 car_ahead =true;
 				}
-				   //check cars in my right lane
+				   //check cars in right lane
 				 } else if (lane != 2 && d > (4*(lane+1)) && d < (4*(lane+2))) {
                             double vx = sensor_fusion[i][3];
                             double vy = sensor_fusion[i][4];
                             double check_speed = sqrt(vx*vx+vy*vy);
                             double check_car_s = sensor_fusion[i][5];
-                            check_car_s += ((double)prev_size*0.02*check_speed); // if using previous points can project s value out
-                            // check s values greater than mine and s gap
-                            
-                            if ((check_car_s > (car_s - 20)) && (check_car_s < (car_s + 30))) {
-                                // lower reference velocity so we don't crash into the car in front of us
-                                right_too_close = true;
-                            }
+                            check_car_s += ((double)prev_size*0.02*check_speed); 
+                                                        
+                            if ((check_car_s > (car_s - 20)) && (check_car_s < (car_s + 30)))
+							  {
+                              car_right = true;
+							  }
 							
-						//check cars in my left lane
+						//check cars in left lane
                         } else if (lane != 0 && d > (4*(lane-1)) && d < (4*(lane+0))) {
                             double vx = sensor_fusion[i][3];
                             double vy = sensor_fusion[i][4];
                             double check_speed = sqrt(vx*vx+vy*vy);
                             double check_car_s = sensor_fusion[i][5];
-                            check_car_s += ((double)prev_size*0.02*check_speed); // if using previous points can project s value out
-                            // check s values greater than mine and s gap
-                            
-                            if ((check_car_s > (car_s - 20)) && (check_car_s < (car_s + 30))) {
-                                // lower reference velocity so we don't crash into the car in front of us
-                                left_too_close = true;
-                            }
+                            check_car_s += ((double)prev_size*0.02*check_speed); 
+                                                        
+                            if ((check_car_s > (car_s - 20)) && (check_car_s < (car_s + 30))) 
+							{
+                            car_left = true;
+							}
                         }
                     }
 
-                    if (too_close) {
-                        ref_vel -= .224; // 0.5 mph
+              // change speed or change lane
+                 
+                if (car_ahead) {
+                        ref_vel -= .224; // reduce speed.
                         
-                        if (lane == 0 && !right_too_close) {
+                        if (lane == 0 && !car_right) {
                             lane = 1;
                         } else if (lane == 1) {
-                            if (!left_too_close) {
+                            if (!car_left) {
                                 lane = 0;
-                            } else if (!right_too_close) {
+                            } else if (!car_left) {
                                 lane = 2;
                             }
-                        } else if (lane == 2 && !left_too_close) {
+                        } else if (lane == 2 && !car_left) {
                             lane = 1;
                         }
                         
                     } else if (ref_vel < 49.5) {
-                        ref_vel += .224;
-                    }
-                     
+                        ref_vel += .224; //increase speed
+                    }    
+					
+                     				                   
 				   
+				   
+                				 
+				  			  
 				  
-				  
-				  
-				 
-
-
-
-
-
-
-
 
           //create a list of widely spaced (x,y) points, evenly spaced at 30m
           //later will interoplate these waypoints wiht spline and fill it in with more points that control speed
