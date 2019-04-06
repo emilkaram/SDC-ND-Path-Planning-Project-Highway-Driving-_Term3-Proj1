@@ -170,12 +170,13 @@ For comfort, a lane change path is done with low acceleration and jerk.
 # Model Documentation:
 Initiate Lane and refrence velocity:
 
-//start in lane 1:
- int lane = 1;
- double ref_vel = 5.0; //mph
+      //start in lane 1:
+      int lane = 1;
+      double ref_vel = 5.0; //mph
 
 Create a list of widely spaced (x,y) points, evenly spaced at 30m, later will interoplate these waypoints wiht spline and fill it in with more points that control speed
-//create a list of widely spaced (x,y) points, evenly spaced at 30m
+          
+	  //create a list of widely spaced (x,y) points, evenly spaced at 30m
           //later will interoplate these waypoints wiht spline and fill it in with more points that control speed
           vector<double> ptsx;
           vector<double> ptsy;
@@ -202,29 +203,179 @@ Create a list of widely spaced (x,y) points, evenly spaced at 30m, later will in
             
 
 Use the previous path's end point as starting refernce:
-![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code5.JPG)
+            
+	    // use the previous path's end point as starting refernce
+            else
+            {
+           //re-define refrence state as previous path end point
+            ref_x = previous_path_x[prev_size-1];
+            ref_y = previous_path_y[prev_size-1];
+
+            double ref_x_prev = previous_path_x[prev_size-2];
+            double ref_y_prev = previous_path_y[prev_size-2];
+            ref_yaw = atan2(ref_y - ref_y_prev , ref_x - ref_x_prev);
+
+            //use two points that make the path tangent to the previous path's end position
+            ptsx.push_back(ref_x_prev);
+            ptsy.push_back(ref_y_prev);
+			
+			ptsx.push_back(ref_x);
+            ptsy.push_back(ref_y);
+
+          }
 
 In Frenet add evenly 3 x 30m spaced points ahead of starting refrence:
-![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code6.JPG)
+
+          // In Frenet add evenly 30 spaced points ahead of starting refrence
+          vector<double> next_wp0 = getXY(car_s+30 , (2 + 4* lane) , map_waypoints_s , map_waypoints_x , map_waypoints_y);
+          vector<double> next_wp1 = getXY(car_s+60 , (2 + 4* lane) , map_waypoints_s , map_waypoints_x , map_waypoints_y);
+          vector<double> next_wp2 = getXY(car_s+90 , (2 + 4* lane) , map_waypoints_s , map_waypoints_x , map_waypoints_y);
+
+          ptsx.push_back(next_wp0[0]);
+          ptsx.push_back(next_wp1[0]);
+          ptsx.push_back(next_wp2[0]);
+
+          ptsy.push_back(next_wp0[1]);
+          ptsy.push_back(next_wp1[1]);
+          ptsy.push_back(next_wp2[1]);
 
 Tranform to the local car coordinates:
-![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image6.png)
+          
+	  //tranform to the local car coordinates (i.e the last point of the prev path is at origin x = 0 , y =0 , anlge =0)
+           for (int i =0 ; i < ptsx.size() ; i++)
+          {
+          //shift car refrence angle to 0
+          double shift_x = ptsx[i]-ref_x;
+          double shift_y = ptsy[i]-ref_y;
+
+          ptsx[i] = (shift_x * cos(0-ref_yaw) - shift_y * sin(0-ref_yaw));
+          ptsy[i] = (shift_x * sin(0-ref_yaw) + shift_y * cos(0-ref_yaw));
+          }
+
+
 
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/image7.png)
 
-![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code7.JPG)
-
 Create a spline:
-![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code8.JPG)
+
+          // create a spline
+          tk::spline s;
+
+          //set (x,y) points to the spline
+          s.set_points(ptsx , ptsy);
+
+          //define the actual (x,y) points we will use for the planner
+          vector<double> next_x_vals;
+          vector<double> next_y_vals;
+
+           //start with all of the previous path points from last time (for smooth tarnsion between paths , instead of creating
+           //new path from scratch every single time , use the leftover from previous path and dd few necessary points
+           for (int i = 0 ; i < previous_path_x.size(); i++)
+           {
+           next_x_vals.push_back(previous_path_x[i]);
+           next_y_vals.push_back(previous_path_y[i]);
+           }
+
+          // calculate how to breack up spline points so we travel at our desired refernece velocity
+          double target_x = 30.0;
+          double target_y = s(target_x); //create spline y points from x points
+          double target_dist = sqrt((target_x)*(target_x)+(target_y)*(target_y));
+
+          double x_add_on =0; // start at the orging 0,0 and angle 0 (after coordinate tranformation)
+
+          // fill up the rest of our path after filling it with the previous points, here will always output 50 points
+          for ( int i = 1 ; i <= 50 - previous_path_x.size(); i++){
+          double N =(target_dist/(0.02*ref_vel/2.24)); //0.02 becz car reach each point each 50ms (from simulator)
+          double x_point = x_add_on+(target_x)/N;
+          double y_point =s(x_point);
+
+         x_add_on = x_point;
+
+         double x_ref = x_point;
+         double y_ref = y_point;
 
 Tranform back to global coordinates
-![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code9.JPG)
 
-Code for checking if a car on the smae lane as my car and if it is too close ( <=30m):
-![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code2.JPG)
+         //rotate or tranfrom  back to the normal coordinates
+         x_point = (x_ref *cos(ref_yaw) - y_ref*sin(ref_yaw));
+         y_point = (x_ref *sin(ref_yaw) + y_ref*cos(ref_yaw));
 
-Code for changing lane safly:
-![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code3.JPG)
+         x_point += ref_x;
+         y_point += ref_y;
+
+         next_x_vals.push_back(x_point);
+         next_y_vals.push_back(y_point);
+          }
+
+Code for checking if a car ahead on the smae lane and cars on right lane and cars on left lane:
+
+             for(int i =0 ; i <sensor_fusion.size(); i++)
+          {
+            
+             float d = sensor_fusion[i][6]; 
+             if (d > (4*(lane+0)) && d < (4*(lane+1))) 
+             {
+              double vx =sensor_fusion[i][3];
+              double vy =sensor_fusion[i][4];
+              double check_speed = sqrt(vx*vx+vy*vy);
+              double check_car_s =sensor_fusion[i][5];
+
+              check_car_s+=((double)prev_size*0.02*check_speed); 
+
+               //check s values for car ahead
+              if((check_car_s > car_s) && ((check_car_s - car_s) < 30)) 
+                {
+                 car_ahead =true;
+				}
+				   //check cars in right lane
+				 } else if (lane != 2 && d > (4*(lane+1)) && d < (4*(lane+2))) {
+                            double vx = sensor_fusion[i][3];
+                            double vy = sensor_fusion[i][4];
+                            double check_speed = sqrt(vx*vx+vy*vy);
+                            double check_car_s = sensor_fusion[i][5];
+                            check_car_s += ((double)prev_size*0.02*check_speed); 
+                                                        
+                            if ((check_car_s > (car_s - 20)) && (check_car_s < (car_s + 30)))
+							  {
+                              car_right = true;
+							  }
+							
+						//check cars in left lane
+                        } else if (lane != 0 && d > (4*(lane-1)) && d < (4*(lane+0))) {
+                            double vx = sensor_fusion[i][3];
+                            double vy = sensor_fusion[i][4];
+                            double check_speed = sqrt(vx*vx+vy*vy);
+                            double check_car_s = sensor_fusion[i][5];
+                            check_car_s += ((double)prev_size*0.02*check_speed); 
+                                                        
+                            if ((check_car_s > (car_s - 20)) && (check_car_s < (car_s + 30))) 
+							{
+                            car_left = true;
+							}
+                        }
+                    }
+
+Code for changing spaeed and changing lane safely:
+            
+	       // change speed or change lane
+                  if (car_ahead) {
+                        ref_vel -= .224; // reduce speed.
+                        
+                        if (lane == 0 && !car_right) {
+                            lane = 1;
+                        } else if (lane == 1) {
+                            if (!car_left) {
+                                lane = 0;
+                            } else if (!car_left) {
+                                lane = 2;
+                            }
+                        } else if (lane == 2 && !car_left) {
+                            lane = 1;
+                        }
+                        
+                    } else if (ref_vel < 49.5) {
+                        ref_vel += .224; //increase speed
+                    }    
 
 
 # Basic Build Instructions
