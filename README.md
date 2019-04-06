@@ -169,10 +169,37 @@ For comfort, a lane change path is done with low acceleration and jerk.
 
 # Model Documentation:
 Initiate Lane and refrence velocity:
-![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code1.JPG)
+
+//start in lane 1:
+ int lane = 1;
+ double ref_vel = 5.0; //mph
 
 Create a list of widely spaced (x,y) points, evenly spaced at 30m, later will interoplate these waypoints wiht spline and fill it in with more points that control speed
-![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code4.JPG)
+//create a list of widely spaced (x,y) points, evenly spaced at 30m
+          //later will interoplate these waypoints wiht spline and fill it in with more points that control speed
+          vector<double> ptsx;
+          vector<double> ptsy;
+
+          //refrence x , y , yaw states
+          double ref_x = car_x;
+          double ref_y = car_y;
+          double ref_yaw = deg2rad(car_yaw);
+
+          // if previous size is almost empty, use the car as statring refrence.
+          if(prev_size <2)
+          {
+          //use two points that make the path tangent to the car
+            double prev_car_x = car_x -cos(car_yaw);
+            double prev_car_y = car_y - sin(car_yaw);
+            
+			// 1st point
+            ptsx.push_back(prev_car_x);
+            ptsy.push_back(prev_car_y);
+			
+			// 2n point
+			ptsx.push_back(car_x);
+            ptsy.push_back(car_y);
+            
 
 Use the previous path's end point as starting refernce:
 ![](https://github.com/emilkaram/SDC-ND-Path-Planning-Project-Highway-Driving-_Term3-Proj1/blob/master/images/code5.JPG)
